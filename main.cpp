@@ -17,8 +17,8 @@ using PriceType = unsigned int;
 // Internal representation of a resting order in the market
 struct InternalOrder
 {
-TraderType trader_id;
-PriceType price;
+    TraderType trader_id;
+    PriceType price;
 };
 
 template<class Comp>
