@@ -69,97 +69,95 @@ struct TradeComp
 
 class Market
 {
-public:
-Market(){}
+    public:
+        Market(){}
 
-Trades execute_order(Order order)
-{
-Trades trades;
+        Trades execute_order(Order order)
+        {
+            Trades trades;
 
-if (order.side == BUY_SIDE)
-trades = _execute_order(sell_orders, buy_orders, order);
-else
-trades = _execute_order(buy_orders, sell_orders, order);
+            if (order.side == BUY_SIDE)
+                trades = _execute_order(sell_orders, buy_orders, order);
+            else
+                trades = _execute_order(buy_orders, sell_orders, order);
 
-if (!trades.empty())
-{
-// Trades are sorted by trader, side and price
-std::sort(trades.begin(), trades.end(), TradeComp());
+            if (!trades.empty())
+            {
+                // Trades are sorted by trader, side and price
+                std::sort(trades.begin(), trades.end(), TradeComp());
 
-if (trades.size() > 2)
-    merge_trades(trades);
-}
+                if (trades.size() > 2)
+                    merge_trades(trades);
+            }
 
-return trades;
-}
+            return trades;
+        }
 
-Trades _execute_order(auto& opposing_orders, auto& same_side_orders, Order& aggr_order)
-{
-Trades trades;
+        Trades _execute_order(auto& opposing_orders, auto& same_side_orders, Order& aggr_order)
+        {
+            Trades trades;
 
-if (opposing_orders.empty())
-{
-same_side_orders.insert({aggr_order, aggr_order.quantity});
-return trades;
-}
+            if (opposing_orders.empty())
+            {
+                same_side_orders.insert({aggr_order, aggr_order.quantity});
+                return trades;
+            }
 
-auto price_acceptable = std::not_fn(same_side_orders.key_comp()); // using std::not_fn for better readability
-int exhausted_rest_orders = 0;
+            auto price_acceptable = std::not_fn(same_side_orders.key_comp()); // using std::not_fn for better readability
+            int exhausted_rest_orders = 0;
 
-for (auto& [rest_order, rest_quantity]: opposing_orders)
-{
-if (!price_acceptable(rest_order, aggr_order) || aggr_order.exhausted())
-    break;
+            for (auto& [rest_order, rest_quantity]: opposing_orders)
+            {
+                if (!price_acceptable(rest_order, aggr_order) || aggr_order.exhausted())
+                    break;
 
-auto overlap_quantity = std::min(rest_quantity, aggr_order.quantity);
-aggr_order.quantity -= overlap_quantity;
-if (rest_quantity -= overlap_quantity; rest_quantity == 0)
-    exhausted_rest_orders++;
+                auto overlap_quantity = std::min(rest_quantity, aggr_order.quantity);
+                aggr_order.quantity -= overlap_quantity;
+                if (rest_quantity -= overlap_quantity; rest_quantity == 0)
+                    exhausted_rest_orders++;
 
-trades.push_back({aggr_order.trader_id, rest_order.price, aggr_order.side, overlap_quantity});
-trades.push_back({rest_order.trader_id, rest_order.price, !aggr_order.side, overlap_quantity});
-}
+                trades.push_back({aggr_order.trader_id, rest_order.price, aggr_order.side, overlap_quantity});
+                trades.push_back({rest_order.trader_id, rest_order.price, !aggr_order.side, overlap_quantity});
+            }
 
-if (exhausted_rest_orders)
-opposing_orders.erase(
-    opposing_orders.begin(),
-    std::next(opposing_orders.begin(), exhausted_rest_orders)
-);
+            if (exhausted_rest_orders)
+                opposing_orders.erase(
+                    opposing_orders.begin(),
+                    std::next(opposing_orders.begin(), exhausted_rest_orders)
+                );
 
-if (!aggr_order.exhausted())
-same_side_orders.insert({aggr_order, aggr_order.quantity});
+            if (!aggr_order.exhausted())
+                same_side_orders.insert({aggr_order, aggr_order.quantity});
 
-return trades;
-}
+            return trades;
+        }
 
-/*
-* Several trades of one trader with the same side and price,
-* created on one aggressor execution, should be reported as one trade with cumulative size.
-*/
-void merge_trades(Trades& trades)
-{
-auto may_be_merged = std::not_fn(TradeComp());  // using std::not_fn for better readability
-for (auto merge_begin = trades.begin(); merge_begin != trades.end();)
-{
-auto merge_end = std::next(merge_begin);
-for (; merge_end != trades.end() && may_be_merged(*merge_begin, *merge_end); merge_end++)
-    merge_begin->quantity += merge_end->quantity;
+        // Several trades of one trader with the same side and price,
+        // created on one aggressor execution, should be reported as one trade with cumulative size.
+        void merge_trades(Trades& trades)
+        {
+            auto may_be_merged = std::not_fn(TradeComp());  // using std::not_fn for better readability
+            for (auto merge_begin = trades.begin(); merge_begin != trades.end();)
+            {
+                auto merge_end = std::next(merge_begin);
+                for (; merge_end != trades.end() && may_be_merged(*merge_begin, *merge_end); merge_end++)
+                    merge_begin->quantity += merge_end->quantity;
 
-merge_begin = trades.erase(std::next(merge_begin), merge_end);
-}
-}
+                merge_begin = trades.erase(std::next(merge_begin), merge_end);
+            }
+        }
 
-private:
-InternalOrders<BuyComp> buy_orders;
-InternalOrders<SellComp> sell_orders;
+    private:
+        InternalOrders<BuyComp> buy_orders;
+        InternalOrders<SellComp> sell_orders;
 };
 
 void print_trades(const Trades& trades)
 {
-for (const auto& t: trades)
-std::cout << t.trader_id << (t.side == BUY_SIDE ? '+': '-') << t.quantity << '@' << t.price << " ";
+    for (const auto& t: trades)
+        std::cout << t.trader_id << (t.side == BUY_SIDE ? '+': '-') << t.quantity << '@' << t.price << " ";
 
-std::cout << std::endl;
+    std::cout << std::endl;
 }
 
 int main()
