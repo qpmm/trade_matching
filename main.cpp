@@ -42,29 +42,29 @@ using Trades = std::vector<Order>;
 // so that the best price for the buyer is in the beginning
 struct SellComp
 {
-bool operator()(const InternalOrder& o1, const InternalOrder& o2) const
-{
-return (o1.price < o2.price);
-}
+    bool operator()(const InternalOrder& o1, const InternalOrder& o2) const
+    {
+        return (o1.price < o2.price);
+    }
 };
 
 // Buying orders are sorted by price from highest to lowest,
 // so that the best price for the seller is in the beginning
 struct BuyComp
 {
-bool operator()(const InternalOrder& o1, const InternalOrder& o2) const
-{
-return (o1.price > o2.price);
-}
+    bool operator()(const InternalOrder& o1, const InternalOrder& o2) const
+    {
+        return (o1.price > o2.price);
+    }
 };
 
 // Trades are sorted by trader, side and price
 struct TradeComp
 {
-bool operator()(const Order& o1, const Order& o2) const
-{
-return std::tie(o1.trader_id, o1.side, o1.price) < std::tie(o2.trader_id, o2.side, o2.price);
-}
+    bool operator()(const Order& o1, const Order& o2) const
+    {
+        return std::tie(o1.trader_id, o1.side, o1.price) < std::tie(o2.trader_id, o2.side, o2.price);
+    }
 };
 
 class Market
