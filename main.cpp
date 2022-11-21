@@ -162,26 +162,26 @@ void print_trades(const Trades& trades)
 
 int main()
 {
-Trades orders;
+    Trades orders;
 
-std::string line;
-for (std::getline(std::cin, line); !line.empty(); std::getline(std::cin, line))
-{
-Order order;
-char side;
+    std::string line;
+    for (std::getline(std::cin, line); !line.empty(); std::getline(std::cin, line))
+    {
+        Order order;
+        char side;
 
-std::stringstream parser(line);
-parser >> order.trader_id >> side >> order.quantity >> order.price;
-order.side = (side == 'B');
+        std::stringstream parser(line);
+        parser >> order.trader_id >> side >> order.quantity >> order.price;
+        order.side = (side == 'B');
 
-orders.push_back(order);
-}
+        orders.push_back(order);
+    }
 
-Market market;
-Trades trades;
-for (const auto& order: orders)
-if (trades = market.execute_order(order); !trades.empty())
-print_trades(trades);
+    Market market;
+    Trades trades;
+    for (const auto& order: orders)
+        if (trades = market.execute_order(order); !trades.empty())
+            print_trades(trades);
 
-return 0;
+    return 0;
 }
