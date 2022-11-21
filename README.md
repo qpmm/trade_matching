@@ -8,36 +8,36 @@ Your program should be a console application that reads input from stdin and wri
 Input is a sequence of requests to buy or sell, one request per line. The request is a series of fields separated by spaces.
 
 A request looks like this:
-<Trader Identifier> <Side> <Quantity> <Price>
+\<Trader Identifier\> \<Side\> \<Quantity\> \<Price\>
  
 Where
-<Trader Identifier> is an alpha-numeric string
-<Side> is a single char: 'B' if this is a buy request, and 'S' if this is a sell request
-<Quantity> is an integer size of a request
-<Price> is an integer price of request
+\<Trader Identifier\> is an alpha-numeric string
+\<Side\> is a single char: 'B' if this is a buy request, and 'S' if this is a sell request
+\<Quantity\> is an integer size of a request
+\<Price\> is an integer price of request
  
 Here is an input example:
-1)  T1 B 5 30
-2)  T2 S 5 70
-3)  T3 B 1 40
-4)  T4 S 2 60
-5)  T5 S 3 70
-6)  T6 S 20 80
-7)  T7 S 1 50
-8)  T2 S 5 70
-9)  T1 B 1 50
-10) T1 B 3 60
-11) T7 S 2 50
-12) T8 B 10 90
+T1 B 5 30
+T2 S 5 70
+T3 B 1 40
+T4 S 2 60
+T5 S 3 70
+T6 S 20 80
+T7 S 1 50
+T2 S 5 70
+T1 B 1 50
+T1 B 3 60
+T7 S 2 50
+T8 B 10 90
  
 Output is a sequence of resulting trades. One line represents all trades created on one aggressor order execution separated by space.
  
 One trade looks like this:
-<Trader Identifier><Sign><Quantity>@<Price>
+\<Trader Identifier\>\<Sign\>\<Quantity\>@\<Price\>
 
 where
-<Trader Identifier> is a trader identifier from the input stream.
-<Sign> is "+" for a buy and "-" for a sell.
+\<Trader Identifier\> is a trader identifier from the input stream.
+\<Sign\> is "+" for a buy and "-" for a sell.
 
 Several trades of one trader with the same side and price, created on one aggressor execution, should be reported as one trade with cumulative size.
 
