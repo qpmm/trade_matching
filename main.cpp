@@ -27,13 +27,13 @@ using InternalOrders = std::multimap<InternalOrder, QuantityType, Comp>;
 // Representation of a trade or aggressor's order
 struct Order : InternalOrder
 {
-bool side;
-QuantityType quantity;
+    bool side;
+    QuantityType quantity;
 
-inline bool exhausted()
-{
-return (quantity == 0);
-}
+    inline bool exhausted()
+    {
+        return (quantity == 0);
+    }
 };
 
 using Trades = std::vector<Order>;
